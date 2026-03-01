@@ -1,6 +1,6 @@
 -- Hitbox Expander
 
-local BALL_SIZE = 6          -- <--- CHANGE THIS NUMBER and re-execute
+local BALL_SIZE = 5.5          -- <--- CHANGE THIS NUMBER and re-execute
                               -- Examples: 8 (small), 16, 24, 36, 50, 80
 
 local CHECK_INTERVAL = 1.5
@@ -68,6 +68,7 @@ while true do
     update_watermark()
     wait(CHECK_INTERVAL)
 end
+
 
 
 
