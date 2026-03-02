@@ -358,7 +358,7 @@ function GalaxLib:CreateWindow(opts)
             -- Center=true centers around X, so give it the horizontal midpoint.
             -- For Y: button height=22, font size=13, so vertical center = wy + (22-13)/2 = wy+4 (unchanged, looks correct)
             poolAdd(pool, wid.."_btnt", "Text", {
-                Position = Vector2.new(wx + innerW/2, wy + 4),
+                Position = Vector2.new(wx + innerW/2, wy + 2),
                 Text=item.label, Size=13, Font=FONT,
                 Color=T.Text, Center=true, Outline=false, Visible=true, ZIndex=7,
             })
@@ -513,7 +513,7 @@ function GalaxLib:CreateWindow(opts)
             -- FIX: Center=true needs the horizontal midpoint as X.
             -- Y: button height=22, font size=13 → vertical center offset = (22-13)/2 = ~4
             poolAdd(pool, wid.."_btnt", "Text", {
-                Position = Vector2.new(wx + innerW/2, wy + 4),
+                Position = Vector2.new(wx + innerW/2, wy + 2),
                 Text=item.label, Size=13, Font=FONT,
                 Color=T.Red, Center=true, Outline=false, Visible=true, ZIndex=7,
             })
