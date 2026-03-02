@@ -20,7 +20,7 @@
     Win:Notify("msg", "title", 3)
     Win:Unload()   -- kills loop + frees all drawings
 
-    -- ⚙ Settings tab is added automatically at the end.
+    -- Settings tab is added automatically at the end.
     --   It contains:
     --     • Toggle Key  — click to rebind the menu open/close key
     --     • Kill Script — stops the loop and removes all drawings
@@ -106,9 +106,6 @@ local function pointOnRect(t, pos, sz)
 end
 
 -- ── Drawing Pool ─────────────────────────────────────────────
--- Frame-tag system: poolBeginFrame resets the "seen" set each frame.
--- poolAdd marks an id as seen. poolFlush hides anything NOT seen
--- (stale drawings from previous tab, closed dropdowns, etc.).
 local function poolNew()
     return { d = {}, seen = {} }
 end
@@ -189,15 +186,12 @@ function GalaxLib:CreateWindow(opts)
         _pool    = poolNew(),
         _tabs    = {},
         _openTab = nil,
-        -- interaction state
         _drag          = nil,
         _sliderDrag    = nil,
         _keybindTarget = nil,
         _textboxTarget = nil,
         _dropdownTarget= nil,
-        -- settings keybind listen state
         _settingsListen = false,
-        -- snake
         _snakeLines = {},
         _snakeCount = 18,
     }
@@ -209,7 +203,7 @@ function GalaxLib:CreateWindow(opts)
     end
 
     -- ============================================================
-    --  AddTab  (public)
+    --  AddTab
     -- ============================================================
     function WIN:AddTab(name)
         local TAB = { _name=name, _sections={}, _win=self }
@@ -217,7 +211,6 @@ function GalaxLib:CreateWindow(opts)
         function TAB:AddSection(sname)
             local SEC = { _name=sname, _widgets={}, _win=self._win }
 
-            -- helpers shared by all widget constructors
             local function reg(item)
                 table.insert(SEC._widgets, item)
             end
@@ -291,41 +284,34 @@ function GalaxLib:CreateWindow(opts)
     end
 
     -- ============================================================
-    --  Settings Tab  (built automatically, always last)
+    --  Settings Tab
     -- ============================================================
     function WIN:_buildSettings()
-        -- Internal tab marker so the render knows it's special
         local STAB = { _name="Settings", _sections={}, _win=self, _isSettings=true }
-
         local SSEC = { _name="Menu", _widgets={}, _win=self }
 
-        -- Special widget: settings_keybind
-        -- Replaces WIN.MenuKey when a new key is pressed
         table.insert(SSEC._widgets, {
             type      = "settings_keybind",
             label     = "Toggle Key",
             listening = false,
         })
 
-        -- Separator label
         table.insert(SSEC._widgets, {
             type  = "label",
             label = "- - - - - - - - - - - -",
         })
 
-        -- Special widget: settings_kill
-        -- Sets _running = false → loop exits → drawings freed
         table.insert(SSEC._widgets, {
             type  = "settings_kill",
             label = "Kill Script",
         })
 
         table.insert(STAB._sections, SSEC)
-        table.insert(self._tabs, STAB)   -- always appended last
+        table.insert(self._tabs, STAB)
     end
 
     -- ============================================================
-    --  Notify / Unload  (public)
+    --  Notify / Unload
     -- ============================================================
     function WIN:Notify(message, title, duration)
         notify(message, title or self.Title, duration or 3)
@@ -336,10 +322,10 @@ function GalaxLib:CreateWindow(opts)
     end
 
     -- ============================================================
-    --  _renderWidget  — draws one item and returns height used
+    --  _renderWidget
     -- ============================================================
     function WIN:_renderWidget(item, pool, wid, wx, wy, innerW, FONT)
-        local wY = 0   -- height consumed by this widget
+        local wY = 0
 
         -- ── label ──────────────────────────────────────────────
         if item.type == "label" then
@@ -364,12 +350,13 @@ function GalaxLib:CreateWindow(opts)
 
         -- ── button ─────────────────────────────────────────────
         elseif item.type == "button" then
-            local bpos = Vector2.new(wx,wy)
-            local bsz  = Vector2.new(innerW,22)
+            local bpos = Vector2.new(wx, wy)
+            local bsz  = Vector2.new(innerW, 22)
             local hov  = over(bpos, bsz)
             poolAdd(pool, wid.."_btn",  "Square", { Position=bpos, Size=bsz, Filled=true,  Color=hov and T.AccentDark or T.Surface1, Visible=true, ZIndex=6 })
             poolAdd(pool, wid.."_btnb", "Square", { Position=bpos, Size=bsz, Filled=false, Color=hov and T.Accent or T.Border0, Thickness=1, Visible=true, ZIndex=7 })
-            poolAdd(pool, wid.."_btnt", "Text",   { Position=bpos+Vector2.new(innerW/2,4), Text=item.label, Size=13, Font=FONT, Color=T.Text, Center=true, Outline=false, Visible=true, ZIndex=7 })
+            -- FIX: use bpos.X (left edge) + let Center=true handle centering, not bpos.X + innerW/2
+            poolAdd(pool, wid.."_btnt", "Text",   { Position=Vector2.new(bpos.X, bpos.Y+4), Text=item.label, Size=13, Font=FONT, Color=T.Text, Center=true, Outline=false, Visible=true, ZIndex=7 })
             if Input.click and hov then item.cb() end
             wY = 28
 
@@ -486,7 +473,6 @@ function GalaxLib:CreateWindow(opts)
             wY = 44
 
         -- ── settings_keybind ───────────────────────────────────
-        -- Special: changes WIN.MenuKey instead of an item value
         elseif item.type == "settings_keybind" then
             local kbStr = item.listening and "[ ... ]" or ("[ "..keyName(self.MenuKey).." ]")
             local kbW   = textW(kbStr,12)+10
@@ -503,7 +489,7 @@ function GalaxLib:CreateWindow(opts)
                 for kc=1,255 do
                     if kc~=0x01 and kc~=0x02 and Input:keyClick(kc) then
                         if kc~=0x1B then
-                            self.MenuKey = kc   -- ← actually changes the bind
+                            self.MenuKey = kc
                             self:Notify("Toggle key changed to "..keyName(kc), self.Title, 3)
                         end
                         item.listening=false; self._settingsListen=false; break
@@ -513,17 +499,17 @@ function GalaxLib:CreateWindow(opts)
             wY = 24
 
         -- ── settings_kill ──────────────────────────────────────
-        -- Red danger button — stops the loop & frees all memory
         elseif item.type == "settings_kill" then
-            local bpos = Vector2.new(wx,wy)
-            local bsz  = Vector2.new(innerW,22)
-            local hov  = over(bpos,bsz)
+            local bpos = Vector2.new(wx, wy)
+            local bsz  = Vector2.new(innerW, 22)
+            local hov  = over(bpos, bsz)
             poolAdd(pool, wid.."_btn",  "Square", { Position=bpos, Size=bsz, Filled=true,  Color=hov and T.RedDark or T.Surface1, Visible=true, ZIndex=6 })
             poolAdd(pool, wid.."_btnb", "Square", { Position=bpos, Size=bsz, Filled=false, Color=hov and T.Red or T.Border0, Thickness=1, Visible=true, ZIndex=7 })
-            poolAdd(pool, wid.."_btnt", "Text",   { Position=bpos+Vector2.new(innerW/2,4), Text=item.label, Size=13, Font=FONT, Color=T.Red, Center=true, Outline=false, Visible=true, ZIndex=7 })
+            -- FIX: use bpos.X (left edge) + let Center=true handle centering, not bpos.X + innerW/2
+            poolAdd(pool, wid.."_btnt", "Text",   { Position=Vector2.new(bpos.X, bpos.Y+4), Text=item.label, Size=13, Font=FONT, Color=T.Red, Center=true, Outline=false, Visible=true, ZIndex=7 })
             if Input.click and hov then
                 self:Notify("Script killed.", self.Title, 2)
-                self._running = false   -- exits the loop → cleanup runs
+                self._running = false
             end
             wY = 28
         end
@@ -532,7 +518,7 @@ function GalaxLib:CreateWindow(opts)
     end
 
     -- ============================================================
-    --  _render  — called every frame
+    --  _render
     -- ============================================================
     function WIN:_render()
         local pool = self._pool
@@ -541,14 +527,12 @@ function GalaxLib:CreateWindow(opts)
         local t    = tick()
         local FONT = Drawing.Fonts.UI
 
-        -- hide everything when menu is closed
         if not self._open then
             poolDestroy(pool)
             for i=1,self._snakeCount do self._snakeLines[i].Visible=false end
             return
         end
 
-        -- begin frame: reset seen-set so stale drawings get hidden at flush
         poolBeginFrame(pool)
 
         -- ── Drag ────────────────────────────────────────────
@@ -625,7 +609,6 @@ function GalaxLib:CreateWindow(opts)
             local sy     = isLeft and colYL or colYR
             local sid    = "s"..si
 
-            -- section header
             poolAdd(pool,sid.."_hdr","Text",{
                 Position=pos+Vector2.new(sx+6,sy+4),
                 Text=sec._name, Size=11, Font=FONT,
@@ -645,7 +628,6 @@ function GalaxLib:CreateWindow(opts)
                 wY = wY + consumed + 6
             end
 
-            -- section box
             local secH = wY-sy+8
             poolAdd(pool,sid.."_bg", "Square",{ Position=pos+Vector2.new(sx,sy), Size=Vector2.new(colW,secH), Filled=true,  Color=T.Surface0, Visible=true, ZIndex=4 })
             poolAdd(pool,sid.."_bgb","Square",{ Position=pos+Vector2.new(sx,sy), Size=Vector2.new(colW,secH), Filled=false, Color=T.Border0, Thickness=1,  Visible=true, ZIndex=5 })
@@ -654,7 +636,6 @@ function GalaxLib:CreateWindow(opts)
             if isLeft then colYL=colYL+secH+12 else colYR=colYR+secH+12 end
         end
 
-        -- flush: hide any drawing not touched this frame (tab switch, etc.)
         poolFlush(pool)
     end
 
@@ -662,8 +643,6 @@ function GalaxLib:CreateWindow(opts)
     --  Main loop
     -- ============================================================
     task.spawn(function()
-        -- Build the Settings tab right before the loop starts
-        -- so user tabs are always first, Settings always last.
         WIN:_buildSettings()
 
         while WIN._running do
@@ -671,7 +650,6 @@ function GalaxLib:CreateWindow(opts)
             if not isrbxactive() then continue end
             Input:update()
 
-            -- menu toggle key (always uses current WIN.MenuKey)
             if Input:keyClick(WIN.MenuKey) then
                 WIN._open = not WIN._open
                 setrobloxinput(not WIN._open)
@@ -686,7 +664,6 @@ function GalaxLib:CreateWindow(opts)
             WIN:_render()
         end
 
-        -- cleanup: remove every drawing
         setrobloxinput(true)
         poolDestroy(WIN._pool)
         for i=1,WIN._snakeCount do WIN._snakeLines[i]:Remove() end
