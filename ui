@@ -193,7 +193,7 @@ function GalaxLib:CreateWindow(opts)
         _dropdownTarget= nil,
         _settingsListen = false,
         _snakeLines = {},
-        _snakeCount = 18,
+        _snakeCount = 36,  -- 18 per snake, 2 snakes
     }
 
     for i = 1, WIN._snakeCount do
@@ -367,7 +367,7 @@ function GalaxLib:CreateWindow(opts)
         elseif item.type == "slider" then
             local valStr = tostring(item.value)..item.suffix
             poolAdd(pool, wid.."_lbl",  "Text",   { Position=Vector2.new(wx,wy), Text=item.label, Size=13, Font=FONT, Color=T.Text, Outline=false, Visible=true, ZIndex=6 })
-            poolAdd(pool, wid.."_val",  "Text",   { Position=Vector2.new(wx+innerW-textW(valStr,12),wy), Text=valStr, Size=12, Font=FONT, Color=T.Accent, Outline=false, Visible=true, ZIndex=6 })
+            poolAdd(pool, wid.."_val",  "Text",   { Position=Vector2.new(wx+innerW-textW(valStr,12),wy), Text=valStr, Size=12, Font=FONT, Color=T.Text, Outline=false, Visible=true, ZIndex=6 })
             local trkPos = Vector2.new(wx, wy+17)
             local trkSz  = Vector2.new(innerW, 5)
             poolAdd(pool, wid.."_trk",  "Square", { Position=trkPos, Size=trkSz, Filled=true, Color=T.Surface1, Visible=true, ZIndex=6 })
@@ -564,16 +564,27 @@ function GalaxLib:CreateWindow(opts)
         poolAdd(pool,"wm_txt","Text",  { Position=pos-Vector2.new(-5,17), Text=wmStr, Size=12, Font=FONT, Color=T.SubText, Outline=false, Visible=true, ZIndex=2 })
 
         -- ── Snake ───────────────────────────────────────────
-        -- Bigger: thicker lines (3.5), more segments (28), slower speed (0.10 vs 0.175)
         local snkPos = pos+Vector2.new(0,topH+2)
         local snkSz  = sz -Vector2.new(0,topH+2)
-        for i=1,self._snakeCount do
+        -- Snake 1: clockwise, rainbow
+        for i=1,18 do
             local ti = (t*0.175)-(i*0.004)
             local sl = self._snakeLines[i]
-            sl.From         = pointOnRect(ti,         snkPos,snkSz)
-            sl.To           = pointOnRect(ti+0.004,   snkPos,snkSz)
+            sl.From         = pointOnRect(ti,        snkPos, snkSz)
+            sl.To           = pointOnRect(ti+0.004,  snkPos, snkSz)
             sl.Color        = Color3.fromHSV((t*0.12+i*0.05)%1, 0.75, 1)
-            sl.Transparency = (1 - i/self._snakeCount) * 0.72
+            sl.Transparency = (1-i/18)*0.78
+            sl.Visible      = true
+            sl.ZIndex       = 50
+        end
+        -- Snake 2: counter-clockwise, rainbow offset by half
+        for i=1,18 do
+            local ti = -(t*0.175)-(i*0.004)
+            local sl = self._snakeLines[18+i]
+            sl.From         = pointOnRect(ti,        snkPos, snkSz)
+            sl.To           = pointOnRect(ti+0.004,  snkPos, snkSz)
+            sl.Color        = Color3.fromHSV((t*0.12+i*0.05+0.5)%1, 0.75, 1)
+            sl.Transparency = (1-i/18)*0.78
             sl.Visible      = true
             sl.ZIndex       = 50
         end
