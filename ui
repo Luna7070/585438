@@ -295,7 +295,7 @@ function GalaxLib:CreateWindow(opts)
     -- ============================================================
     function WIN:_buildSettings()
         -- Internal tab marker so the render knows it's special
-        local STAB = { _name="⚙ Settings", _sections={}, _win=self, _isSettings=true }
+        local STAB = { _name="Settings", _sections={}, _win=self, _isSettings=true }
 
         local SSEC = { _name="Menu", _widgets={}, _win=self }
 
