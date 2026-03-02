@@ -495,7 +495,7 @@ function GalaxLib:CreateWindow(opts)
                     if kc~=0x01 and kc~=0x02 and Input:keyClick(kc) then
                         if kc~=0x1B then
                             self.MenuKey = kc
-                            self:Notify("Toggle key changed to "..keyName(kc), self.Title, 3)
+                            self:Notify("Toggle key changed to "..keyName(kc), self.Title, 7)
                         end
                         item.listening=false; self._settingsListen=false; break
                     end
