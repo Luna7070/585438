@@ -555,7 +555,7 @@ function GalaxLib:CreateWindow(opts)
         -- ── Topbar ──────────────────────────────────────────
         local topH = 38
         poolAdd(pool,"top_bg",   "Square",{ Position=pos, Size=Vector2.new(sz.X,topH), Filled=true, Color=T.Surface0, Visible=true, ZIndex=2 })
-        poolAdd(pool,"top_line", "Square",{ Position=pos+Vector2.new(0,topH), Size=Vector2.new(sz.X,2), Filled=true, Color=T.Accent, Visible=true, ZIndex=3 })
+
         poolAdd(pool,"top_title","Text",  { Position=pos+Vector2.new(12,11), Text=self.Title, Size=16, Font=FONT, Color=T.Accent, Outline=true, Visible=true, ZIndex=3 })
 
         -- ── Watermark ───────────────────────────────────────
