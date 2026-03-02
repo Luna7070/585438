@@ -36,8 +36,8 @@ local T = {
     Surface1   = Color3.fromRGB(26, 26, 34),
     Border0    = Color3.fromRGB(35, 35, 46),
     Border1    = Color3.fromRGB(50, 50, 65),
-    Accent     = Color3.fromRGB(255, 60, 60),
-    AccentDark = Color3.fromRGB(70, 38, 140),
+    Accent     = Color3.fromRGB(220, 40, 40),     -- ← CHANGED TO RED (was violet)
+    AccentDark = Color3.fromRGB(100, 15, 15),     -- ← CHANGED TO DARK RED (was violet)
     Text       = Color3.fromRGB(240, 240, 245),
     SubText    = Color3.fromRGB(110, 110, 130),
     Red        = Color3.fromRGB(220, 70, 70),
@@ -355,8 +355,6 @@ function GalaxLib:CreateWindow(opts)
             local hov  = over(bpos, bsz)
             poolAdd(pool, wid.."_btn",  "Square", { Position=bpos, Size=bsz, Filled=true,  Color=hov and T.AccentDark or T.Surface1, Visible=true, ZIndex=6 })
             poolAdd(pool, wid.."_btnb", "Square", { Position=bpos, Size=bsz, Filled=false, Color=hov and T.Accent or T.Border0, Thickness=1, Visible=true, ZIndex=7 })
-            -- Center=true centers around X, so give it the horizontal midpoint.
-            -- For Y: button height=22, font size=13, so vertical center = wy + (22-13)/2 = wy+4 (unchanged, looks correct)
             poolAdd(pool, wid.."_btnt", "Text", {
                 Position = Vector2.new(wx + innerW/2, wy + 4),
                 Text=item.label, Size=13, Font=FONT,
@@ -510,8 +508,6 @@ function GalaxLib:CreateWindow(opts)
             local hov  = over(bpos, bsz)
             poolAdd(pool, wid.."_btn",  "Square", { Position=bpos, Size=bsz, Filled=true,  Color=hov and T.RedDark or T.Surface1, Visible=true, ZIndex=6 })
             poolAdd(pool, wid.."_btnb", "Square", { Position=bpos, Size=bsz, Filled=false, Color=hov and T.Red or T.Border0, Thickness=1, Visible=true, ZIndex=7 })
-            -- FIX: Center=true needs the horizontal midpoint as X.
-            -- Y: button height=22, font size=13 → vertical center offset = (22-13)/2 = ~4
             poolAdd(pool, wid.."_btnt", "Text", {
                 Position = Vector2.new(wx + innerW/2, wy + 4),
                 Text=item.label, Size=13, Font=FONT,
