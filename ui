@@ -564,8 +564,8 @@ function GalaxLib:CreateWindow(opts)
         poolAdd(pool,"wm_txt","Text",  { Position=pos-Vector2.new(-5,17), Text=wmStr, Size=12, Font=FONT, Color=T.SubText, Outline=false, Visible=true, ZIndex=2 })
 
         -- ── Snake ───────────────────────────────────────────
-        local snkPos = pos+Vector2.new(0,topH+2)
-        local snkSz  = sz -Vector2.new(0,topH+2)
+        local snkPos = pos+Vector2.new(0,topH+30)
+        local snkSz  = sz -Vector2.new(0,topH+30)
         -- Snake 1: clockwise, rainbow
         for i=1,18 do
             local ti = (t*0.175)-(i*0.004)
