@@ -565,7 +565,6 @@ function GalaxLib:CreateWindow(opts)
 
         -- ── Snake ───────────────────────────────────────────
         -- Bigger: thicker lines (3.5), more segments (28), slower speed (0.10 vs 0.175)
-        -- Color cycles through warm reds/oranges for a fire-like snake
         local snkPos = pos+Vector2.new(0,topH+2)
         local snkSz  = sz -Vector2.new(0,topH+2)
         local segSpacing = 0.006  -- wider gaps between segments = longer visible trail
@@ -574,9 +573,7 @@ function GalaxLib:CreateWindow(opts)
             local sl = self._snakeLines[i]
             sl.From         = pointOnRect(ti,             snkPos, snkSz)
             sl.To           = pointOnRect(ti+segSpacing,  snkPos, snkSz)
-            -- Cycle hue through red (0.0) → orange (0.08) → back, for a hot fire look
-            local hue = ((t*0.08 + i*0.03) % 0.16)  -- stays in red-orange range
-            sl.Color        = Color3.fromHSV(hue, 0.9, 1)
+            sl.Color        = Color3.fromHSV((t*0.12+i*0.05)%1, 0.75, 1)
             sl.Transparency = (1 - i/self._snakeCount) * 0.72
             sl.Visible      = true
             sl.ZIndex       = 50
