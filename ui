@@ -193,12 +193,12 @@ function GalaxLib:CreateWindow(opts)
         _dropdownTarget= nil,
         _settingsListen = false,
         _snakeLines = {},
-        _snakeCount = 28,  -- more segments for bigger/fuller look
+        _snakeCount = 18,
     }
 
     for i = 1, WIN._snakeCount do
         WIN._snakeLines[i] = newDraw("Line", {
-            Thickness=3.5, Color=T.Accent, Visible=false, ZIndex=50,  -- thicker lines
+            Thickness=1.5, Color=T.Accent, Visible=false, ZIndex=50,
         })
     end
 
@@ -567,12 +567,11 @@ function GalaxLib:CreateWindow(opts)
         -- Bigger: thicker lines (3.5), more segments (28), slower speed (0.10 vs 0.175)
         local snkPos = pos+Vector2.new(0,topH+2)
         local snkSz  = sz -Vector2.new(0,topH+2)
-        local segSpacing = 0.006  -- wider gaps between segments = longer visible trail
         for i=1,self._snakeCount do
-            local ti = (t*0.10)-(i*segSpacing)
+            local ti = (t*0.175)-(i*0.004)
             local sl = self._snakeLines[i]
-            sl.From         = pointOnRect(ti,             snkPos, snkSz)
-            sl.To           = pointOnRect(ti+segSpacing,  snkPos, snkSz)
+            sl.From         = pointOnRect(ti,         snkPos,snkSz)
+            sl.To           = pointOnRect(ti+0.004,   snkPos,snkSz)
             sl.Color        = Color3.fromHSV((t*0.12+i*0.05)%1, 0.75, 1)
             sl.Transparency = (1 - i/self._snakeCount) * 0.72
             sl.Visible      = true
