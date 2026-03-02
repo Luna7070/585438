@@ -36,8 +36,8 @@ local T = {
     Surface1   = Color3.fromRGB(26, 26, 34),
     Border0    = Color3.fromRGB(35, 35, 46),
     Border1    = Color3.fromRGB(50, 50, 65),
-    Accent     = Color3.fromRGB(130, 80, 220),
-    AccentDark = Color3.fromRGB(70, 38, 140),
+    Accent     = Color3.fromRGB(220, 50, 50),    -- red
+    AccentDark = Color3.fromRGB(110, 18, 18),    -- dark red
     Text       = Color3.fromRGB(240, 240, 245),
     SubText    = Color3.fromRGB(110, 110, 130),
     Red        = Color3.fromRGB(220, 70, 70),
@@ -193,12 +193,12 @@ function GalaxLib:CreateWindow(opts)
         _dropdownTarget= nil,
         _settingsListen = false,
         _snakeLines = {},
-        _snakeCount = 18,
+        _snakeCount = 28,  -- more segments for bigger/fuller look
     }
 
     for i = 1, WIN._snakeCount do
         WIN._snakeLines[i] = newDraw("Line", {
-            Thickness=1.5, Color=T.Accent, Visible=false, ZIndex=50,
+            Thickness=3.5, Color=T.Accent, Visible=false, ZIndex=50,  -- thicker lines
         })
     end
 
@@ -355,8 +355,6 @@ function GalaxLib:CreateWindow(opts)
             local hov  = over(bpos, bsz)
             poolAdd(pool, wid.."_btn",  "Square", { Position=bpos, Size=bsz, Filled=true,  Color=hov and T.AccentDark or T.Surface1, Visible=true, ZIndex=6 })
             poolAdd(pool, wid.."_btnb", "Square", { Position=bpos, Size=bsz, Filled=false, Color=hov and T.Accent or T.Border0, Thickness=1, Visible=true, ZIndex=7 })
-            -- Center=true centers around X, so give it the horizontal midpoint.
-            -- For Y: button height=22, font size=13, so vertical center = wy + (22-13)/2 = wy+4 (unchanged, looks correct)
             poolAdd(pool, wid.."_btnt", "Text", {
                 Position = Vector2.new(wx + innerW/2, wy + 4),
                 Text=item.label, Size=13, Font=FONT,
@@ -510,8 +508,6 @@ function GalaxLib:CreateWindow(opts)
             local hov  = over(bpos, bsz)
             poolAdd(pool, wid.."_btn",  "Square", { Position=bpos, Size=bsz, Filled=true,  Color=hov and T.RedDark or T.Surface1, Visible=true, ZIndex=6 })
             poolAdd(pool, wid.."_btnb", "Square", { Position=bpos, Size=bsz, Filled=false, Color=hov and T.Red or T.Border0, Thickness=1, Visible=true, ZIndex=7 })
-            -- FIX: Center=true needs the horizontal midpoint as X.
-            -- Y: button height=22, font size=13 → vertical center offset = (22-13)/2 = ~4
             poolAdd(pool, wid.."_btnt", "Text", {
                 Position = Vector2.new(wx + innerW/2, wy + 4),
                 Text=item.label, Size=13, Font=FONT,
@@ -568,15 +564,20 @@ function GalaxLib:CreateWindow(opts)
         poolAdd(pool,"wm_txt","Text",  { Position=pos-Vector2.new(-5,17), Text=wmStr, Size=12, Font=FONT, Color=T.SubText, Outline=false, Visible=true, ZIndex=2 })
 
         -- ── Snake ───────────────────────────────────────────
+        -- Bigger: thicker lines (3.5), more segments (28), slower speed (0.10 vs 0.175)
+        -- Color cycles through warm reds/oranges for a fire-like snake
         local snkPos = pos+Vector2.new(0,topH+2)
         local snkSz  = sz -Vector2.new(0,topH+2)
+        local segSpacing = 0.006  -- wider gaps between segments = longer visible trail
         for i=1,self._snakeCount do
-            local ti = (t*0.175)-(i*0.004)
+            local ti = (t*0.10)-(i*segSpacing)
             local sl = self._snakeLines[i]
-            sl.From         = pointOnRect(ti,         snkPos,snkSz)
-            sl.To           = pointOnRect(ti+0.004,   snkPos,snkSz)
-            sl.Color        = Color3.fromHSV((t*0.12+i*0.05)%1, 0.75, 1)
-            sl.Transparency = (1-i/self._snakeCount)*0.78
+            sl.From         = pointOnRect(ti,             snkPos, snkSz)
+            sl.To           = pointOnRect(ti+segSpacing,  snkPos, snkSz)
+            -- Cycle hue through red (0.0) → orange (0.08) → back, for a hot fire look
+            local hue = ((t*0.08 + i*0.03) % 0.16)  -- stays in red-orange range
+            sl.Color        = Color3.fromHSV(hue, 0.9, 1)
+            sl.Transparency = (1 - i/self._snakeCount) * 0.72
             sl.Visible      = true
             sl.ZIndex       = 50
         end
