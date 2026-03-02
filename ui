@@ -314,7 +314,7 @@ function GalaxLib:CreateWindow(opts)
     --  Notify / Unload
     -- ============================================================
     function WIN:Notify(message, title, duration)
-        notify(message, title or self.Title, duration or 3)
+        notify(message, title or self.Title, duration or 7)
     end
 
     function WIN:Unload()
