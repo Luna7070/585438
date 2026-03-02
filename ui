@@ -600,11 +600,7 @@ function GalaxLib:CreateWindow(opts)
             local open = (self._openTab==tab)
             poolAdd(pool,"tab_bg_"..i,  "Square",{ Position=tpos, Size=tsz, Filled=true, Color=open and T.Surface1 or T.Surface0, Visible=true, ZIndex=3 })
             poolAdd(pool,"tab_txt_"..i, "Text",  { Position=tpos+Vector2.new(tw/2,tabH/2-6), Text=tab._name, Size=13, Font=FONT, Color=open and T.Text or T.SubText, Center=true, Outline=false, Visible=true, ZIndex=4 })
-            if open then
-                poolAdd(pool,"tab_ul_"..i,"Square",{ Position=tpos+Vector2.new(0,tabH-2), Size=Vector2.new(tw,2), Filled=true, Color=T.Accent, Visible=true, ZIndex=4 })
-            else
-                poolHide(pool,"tab_ul_"..i)
-            end
+            poolHide(pool,"tab_ul_"..i)
             if Input.click and over(tpos,tsz) then
                 self._openTab=tab
                 self._dropdownTarget=nil; self._textboxTarget=nil
