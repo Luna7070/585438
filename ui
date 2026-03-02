@@ -566,25 +566,25 @@ function GalaxLib:CreateWindow(opts)
         -- ── Snake ───────────────────────────────────────────
         local snkPos = pos
         local snkSz  = sz
-        -- Snake 1: clockwise, rainbow
+        -- Snake 1: clockwise, starts top-left
         for i=1,18 do
             local ti = (t*0.175)-(i*0.004)
             local sl = self._snakeLines[i]
             sl.From         = pointOnRect(ti,        snkPos, snkSz)
             sl.To           = pointOnRect(ti+0.004,  snkPos, snkSz)
-            sl.Color        = Color3.fromHSV((t*0.12+i*0.05)%1, 0.75, 1)
-            sl.Transparency = (1-i/18)*0.78
+            sl.Color        = Color3.fromHSV((t*0.12+i*0.05)%1, 0.85, 1)
+            sl.Transparency = (1-i/18)*0.70
             sl.Visible      = true
             sl.ZIndex       = 50
         end
-        -- Snake 2: counter-clockwise, rainbow offset by half
+        -- Snake 2: counter-clockwise, starts top-right (offset 0.5 = opposite corner)
         for i=1,18 do
-            local ti = -(t*0.175)-(i*0.004)
+            local ti = -(t*0.175)+(0.5)-(i*0.004)
             local sl = self._snakeLines[18+i]
             sl.From         = pointOnRect(ti,        snkPos, snkSz)
             sl.To           = pointOnRect(ti+0.004,  snkPos, snkSz)
-            sl.Color        = Color3.fromHSV((t*0.12+i*0.05+0.5)%1, 0.75, 1)
-            sl.Transparency = (1-i/18)*0.78
+            sl.Color        = Color3.fromHSV((t*0.12+i*0.05+0.5)%1, 0.85, 1)
+            sl.Transparency = (1-i/18)*0.70
             sl.Visible      = true
             sl.ZIndex       = 50
         end
