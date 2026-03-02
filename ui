@@ -355,8 +355,13 @@ function GalaxLib:CreateWindow(opts)
             local hov  = over(bpos, bsz)
             poolAdd(pool, wid.."_btn",  "Square", { Position=bpos, Size=bsz, Filled=true,  Color=hov and T.AccentDark or T.Surface1, Visible=true, ZIndex=6 })
             poolAdd(pool, wid.."_btnb", "Square", { Position=bpos, Size=bsz, Filled=false, Color=hov and T.Accent or T.Border0, Thickness=1, Visible=true, ZIndex=7 })
-            -- FIX: use bpos.X (left edge) + let Center=true handle centering, not bpos.X + innerW/2
-            poolAdd(pool, wid.."_btnt", "Text",   { Position=Vector2.new(bpos.X, bpos.Y+4), Text=item.label, Size=13, Font=FONT, Color=T.Text, Center=true, Outline=false, Visible=true, ZIndex=7 })
+            -- Center=true centers around X, so give it the horizontal midpoint.
+            -- For Y: button height=22, font size=13, so vertical center = wy + (22-13)/2 = wy+4 (unchanged, looks correct)
+            poolAdd(pool, wid.."_btnt", "Text", {
+                Position = Vector2.new(wx + innerW/2, wy + 4),
+                Text=item.label, Size=13, Font=FONT,
+                Color=T.Text, Center=true, Outline=false, Visible=true, ZIndex=7,
+            })
             if Input.click and hov then item.cb() end
             wY = 28
 
@@ -505,8 +510,13 @@ function GalaxLib:CreateWindow(opts)
             local hov  = over(bpos, bsz)
             poolAdd(pool, wid.."_btn",  "Square", { Position=bpos, Size=bsz, Filled=true,  Color=hov and T.RedDark or T.Surface1, Visible=true, ZIndex=6 })
             poolAdd(pool, wid.."_btnb", "Square", { Position=bpos, Size=bsz, Filled=false, Color=hov and T.Red or T.Border0, Thickness=1, Visible=true, ZIndex=7 })
-            -- FIX: use bpos.X (left edge) + let Center=true handle centering, not bpos.X + innerW/2
-            poolAdd(pool, wid.."_btnt", "Text",   { Position=Vector2.new(bpos.X, bpos.Y+4), Text=item.label, Size=13, Font=FONT, Color=T.Red, Center=true, Outline=false, Visible=true, ZIndex=7 })
+            -- FIX: Center=true needs the horizontal midpoint as X.
+            -- Y: button height=22, font size=13 → vertical center offset = (22-13)/2 = ~4
+            poolAdd(pool, wid.."_btnt", "Text", {
+                Position = Vector2.new(wx + innerW/2, wy + 4),
+                Text=item.label, Size=13, Font=FONT,
+                Color=T.Red, Center=true, Outline=false, Visible=true, ZIndex=7,
+            })
             if Input.click and hov then
                 self:Notify("Script killed.", self.Title, 2)
                 self._running = false
