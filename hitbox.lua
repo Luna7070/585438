@@ -1,12 +1,6 @@
--- =============================================
---  HITBOX EXPANDER - FINAL CLEAN VERSION
---  (Keybind saves correctly + optimized for old PCs)
--- =============================================
-
--- Load GalaxLib
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Luna7070/585438/refs/heads/main/ui"))()
 
-task.wait(0.8) -- safety for Matcha
+task.wait(0.8)
 
 local BALL_SIZE = 5.5
 local saveFile = "hitbox_size.txt"
@@ -43,7 +37,7 @@ end
 
 notify("Hitbox Expander", getKeyName(MENU_KEY) .. " for menu | Size: " .. string.format("%.1f", BALL_SIZE), 7)
 
--- ====================== SAFE BALL FOLDER ======================
+-- ====================== BALL FOLDER ======================
 local replicated = game:GetService("ReplicatedStorage")
 local ball_folder = nil
 
@@ -90,7 +84,7 @@ local Win = GalaxLib:CreateWindow({
 
 Win._open = false
 
--- Silent keybind saving (no extra notification)
+-- Silent keybind saving
 local oldNotify = Win.Notify
 function Win:Notify(msg, title, dur)
     if msg and msg:find("Toggle key changed to") then
@@ -114,7 +108,7 @@ Sec:AddSlider("Hitbox Size", {
     saveSize()
 end)
 
--- Background refresh (very light)
+-- Background refresh
 task.spawn(function()
     expand_balls()
     local lastCheck = tick()
@@ -127,7 +121,7 @@ task.spawn(function()
     end
 end)
 
--- Auto-save keybind (silent)
+-- Auto-save keybind
 task.spawn(function()
     while true do
         task.wait(0.5)
@@ -137,3 +131,4 @@ task.spawn(function()
         end
     end
 end)
+
