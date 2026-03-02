@@ -193,12 +193,12 @@ function GalaxLib:CreateWindow(opts)
         _dropdownTarget= nil,
         _settingsListen = false,
         _snakeLines = {},
-        _snakeCount = 36,  -- 18 per snake, 2 snakes
+        _snakeCount = 60,  -- 30 per snake, 2 snakes
     }
 
     for i = 1, WIN._snakeCount do
         WIN._snakeLines[i] = newDraw("Line", {
-            Thickness=1.5, Color=T.Accent, Visible=false, ZIndex=50,
+            Thickness=3, Color=T.Accent, Visible=false, ZIndex=50,
         })
     end
 
@@ -567,24 +567,24 @@ function GalaxLib:CreateWindow(opts)
         local snkPos = pos
         local snkSz  = sz
         -- Snake 1: clockwise, starts top-left
-        for i=1,18 do
-            local ti = (t*0.175)-(i*0.004)
+        for i=1,30 do
+            local ti = (t*0.175)-(i*0.006)
             local sl = self._snakeLines[i]
             sl.From         = pointOnRect(ti,        snkPos, snkSz)
-            sl.To           = pointOnRect(ti+0.004,  snkPos, snkSz)
-            sl.Color        = Color3.fromHSV((t*0.12+i*0.05)%1, 0.85, 1)
-            sl.Transparency = (1-i/18)*0.70
+            sl.To           = pointOnRect(ti+0.006,  snkPos, snkSz)
+            sl.Color        = Color3.fromHSV((t*0.12+i*0.04)%1, 0.85, 1)
+            sl.Transparency = (1-i/30)*0.65
             sl.Visible      = true
             sl.ZIndex       = 50
         end
-        -- Snake 2: counter-clockwise, starts top-right (offset 0.5 = opposite corner)
-        for i=1,18 do
-            local ti = -(t*0.175)+(0.5)-(i*0.004)
-            local sl = self._snakeLines[18+i]
+        -- Snake 2: counter-clockwise, starts opposite side
+        for i=1,30 do
+            local ti = -(t*0.175)+(0.5)-(i*0.006)
+            local sl = self._snakeLines[30+i]
             sl.From         = pointOnRect(ti,        snkPos, snkSz)
-            sl.To           = pointOnRect(ti+0.004,  snkPos, snkSz)
-            sl.Color        = Color3.fromHSV((t*0.12+i*0.05+0.5)%1, 0.85, 1)
-            sl.Transparency = (1-i/18)*0.70
+            sl.To           = pointOnRect(ti+0.006,  snkPos, snkSz)
+            sl.Color        = Color3.fromHSV((t*0.12+i*0.04+0.5)%1, 0.85, 1)
+            sl.Transparency = (1-i/30)*0.65
             sl.Visible      = true
             sl.ZIndex       = 50
         end
